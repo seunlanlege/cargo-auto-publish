@@ -62,7 +62,7 @@ const { parse } = __webpack_require__(401)
 
 ;(async () => {
 	// fetch the tomls from the config
-	let toml = core.getInput('toml') || 'core/Cargo.toml ipc/Cargo.toml'
+	let toml = core.getInput('toml') || '*/*Cargo.toml'
 
 	// compare the specified toml files with the previous commit (HEAD-1)
 	// to know if it's change
@@ -97,12 +97,13 @@ const { parse } = __webpack_require__(401)
 
 		let folder
 		if (paths.length > 1) {
-			folder = paths[paths.length - 2]
+			folder = paths.slice(0, paths.length - 1).join('/')
 		} else {
-			folder = paths[paths.length - 1]
+			folder = "."
 		}
 
 		const crate = parse(await fs.readFileSync(file.to))
+		
 		console.log('Publishing crate: ', crate.package.name)
 
 		await new Promise(resolve => {

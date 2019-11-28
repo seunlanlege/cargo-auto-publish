@@ -7,23 +7,21 @@ const { parse } = require('toml')
 
 ;(async () => {
 	// fetch the tomls from the config
-	let toml = core.getInput('toml') || 'core/Cargo.toml ipc/Cargo.toml'
+	let toml = core.getInput('toml') || '*/*Cargo.toml'
 
 	// compare the specified toml files with the previous commit (HEAD-1)
 	// to know if it's change
-	console.log("current directory: ", process.cwd())
-	// let data = await new Promise(resolve => {
-	// 	exec(`git diff HEAD^ HEAD -- ${toml}`, async (error, stdout, stderr) => {
-	// 		if (error) {
-	// 			console.error('error:', error)
-	// 		}
-	// 		if (stderr) {
-	// 			console.error('stderr:', stderr)
-	// 		}
-	// 		resolve(stdout)
-	// 	})
-	// })
-	let data = ""
+	let data = await new Promise(resolve => {
+		exec(`git diff HEAD^ HEAD -- ${toml}`, async (error, stdout, stderr) => {
+			if (error) {
+				console.error('error:', error)
+			}
+			if (stderr) {
+				console.error('stderr:', stderr)
+			}
+			resolve(stdout)
+		})
+	})
 
 	// parse the diff
 	let diff = parseDiff(data)
@@ -44,12 +42,13 @@ const { parse } = require('toml')
 
 		let folder
 		if (paths.length > 1) {
-			folder = paths[paths.length - 2]
+			folder = paths.slice(0, paths.length - 1).join('/')
 		} else {
-			folder = paths[paths.length - 1]
+			folder = "."
 		}
 
 		const crate = parse(await fs.readFileSync(file.to))
+		
 		console.log('Publishing crate: ', crate.package.name)
 
 		await new Promise(resolve => {
