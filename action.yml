@@ -1,31 +1,11 @@
 name: 'cargo-auto-publish'
 description: 'Automatically publish cargo crates in your repo when the version changes'
 author: 'seunlanlege'
-on:
-  push:
-    branches:
-      - master
+
 inputs:
   toml:
     description: space de-limited paths to Cargo.toml files of crates you want to auto-publish
-    jobs:
-  build:
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Install toolchain
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          default: true
-      - uses: actions-rs/cargo@v1
-          with: 
-            command: login
-            args: ${{CARGO_TOKEN}}
 
-      - uses: actions/checkout@master
-        with:
-          submodules: recursive
-      runs:
-        using: 'node12'
-        main: 'dist/index.js'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
