@@ -11,6 +11,7 @@ const { parse } = require('toml')
 
 	// compare the specified toml files with the previous commit (HEAD-1)
 	// to know if it's change
+	console.log("current directory: ", process.cwd())
 	let data = await new Promise(resolve => {
 		exec(`git diff HEAD^ HEAD -- ${toml}`, async (error, stdout, stderr) => {
 			if (error) {
